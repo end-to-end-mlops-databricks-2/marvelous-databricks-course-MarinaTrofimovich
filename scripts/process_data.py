@@ -1,7 +1,7 @@
 import yaml
 
-from sales_predictor.data_processor import DataProcessor
-from sales_predictor.config import ProjectConfig
+from churn_predictor.data_processor import DataProcessor
+from churn_predictor.config import ProjectConfig
 
 # Load configuration
 config = ProjectConfig.from_yaml(config_path="../../project_config.yml")
