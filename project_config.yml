@@ -1,24 +1,27 @@
+catalog_name: mlops_prod
+schema_name: churn_predictor
+
 parameters:
   learning_rate: 0.01
   n_estimators: 1000
   max_depth: 6
 
 num_features:
-  - RowNumber
-  - CustomerId
-  - Surname
-  - CreditScore
-  - Age
-  - Balance
+  - LotFrontage 
+  - LotArea
+  - OverallQual
+  - OverallCond
+  - YearBuilt
+  - YearRemodAdd
   - MasVnrArea
   - TotalBsmtSF
   - GrLivArea
   - GarageCars
 
 cat_features:
-  - Geography
-  - Gender
-  - Tenure
+  - MSZoning
+  - Street
+  - Alley
   - LotShape
   - LandContour
   - Neighborhood

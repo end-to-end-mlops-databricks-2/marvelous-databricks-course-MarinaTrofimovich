@@ -4,7 +4,7 @@ from churn_predictor.data_processor import DataProcessor
 from churn_predictor.config import ProjectConfig
 
 # Load configuration
-config = ProjectConfig.from_yaml(config_path="../../project_config.yml")
+config = ProjectConfig.from_yaml(config_path="../project_config.yml")
 
 print("Configuration loaded:")
 print(yaml.dump(config, default_flow_style=False))
