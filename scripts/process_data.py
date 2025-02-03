@@ -23,4 +23,4 @@ X_train, X_test = data_processor.split_data()
 print("Training set shape:", X_train.shape)
 print("Test set shape:", X_test.shape)
 
-data_processor.save_to_catalog(X_train, X_test)
+#data_processor.save_to_catalog(X_train, X_test)

@@ -13,35 +13,15 @@ class DataProcessor:
         self.df = pd.read_csv(filepath)  # Read a csv file and store it as pandas df
         self.config = config  # Store the configuration
 
-    def preprocess(self):
+    def preprocess_data(self):
         """Preprocess the DataFrame stored in self.df"""
         self.df = self.df.fillna(0)  # Fill NaN values with 0
-
-        # Handle missing values and convert data types as needed
-        self.df["LotFrontage"] = pd.to_numeric(self.df["LotFrontage"], errors="coerce")
- 
-        self.df["GarageYrBlt"] = pd.to_numeric(self.df["GarageYrBlt"], errors="coerce")
-        median_year = self.df["GarageYrBlt"].median()
-        self.df["GarageYrBlt"].fillna(median_year, inplace=True)
-        current_year = datetime.now().year
- 
-        self.df["GarageAge"] = current_year - self.df["GarageYrBlt"]
-        self.df.drop(columns=["GarageYrBlt"], inplace=True)
  
         # Handle numeric features
         num_features = self.config.num_features
         for col in num_features:
             self.df[col] = pd.to_numeric(self.df[col], errors="coerce")
  
-        # Fill missing values with mean or default values
-        self.df.fillna(
-            {
-                "LotFrontage": self.df["LotFrontage"].mean(),
-                "MasVnrType": "None",
-                "MasVnrArea": 0,
-            },
-            inplace=True,
-        )
  
         # Convert categorical features to the appropriate type
         cat_features = self.config.cat_features
@@ -50,9 +30,8 @@ class DataProcessor:
  
         # Extract target and relevant features
         target = self.config.target
-        relevant_columns = cat_features + num_features + [target] + ["Id"]
+        relevant_columns = cat_features + num_features + [target]
         self.df = self.df[relevant_columns]
-        self.df["Id"] = self.df["Id"].astype("str")
 
     def split_data(self, test_size=0.2, random_state=42):
         """Split the DataFrame (self.df) into training and test sets."""
