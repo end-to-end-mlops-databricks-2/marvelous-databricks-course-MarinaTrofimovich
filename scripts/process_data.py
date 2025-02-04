@@ -1,3 +1,5 @@
+#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
+
 import yaml
 
 from churn_predictor.data_processor import DataProcessor
