@@ -6,10 +6,6 @@ import os
 from churn_predictor.data_processor import DataProcessor
 from churn_predictor.config import ProjectConfig
 
-#config_path = os.path.abspath("project_config.yml")
-#print('config_path:', config_path)
-#config = ProjectConfig.from_yaml(config_path=config_path)
-
 # Determine the environment and set the config path accordingly
 if 'DATABRICKS_RUNTIME_VERSION' in os.environ:
     config_path = "../project_config.yml"
