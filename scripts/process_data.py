@@ -21,7 +21,15 @@ print(yaml.dump(config, default_flow_style=False))
 
 # COMMAND ----------
 # Initialize DataProcessor
-data_path = os.path.abspath("data/data.csv")
+#data_path = os.path.abspath("data/data.csv")
+#print('data_path:', data_path)
+#data_processor = DataProcessor(data_path, config)
+
+if 'DATABRICKS_RUNTIME_VERSION' in os.environ:
+    data_path = "../data/data.csv"
+else:
+    data_path = os.path.abspath("data/data.csv")
+
 print('data_path:', data_path)
 data_processor = DataProcessor(data_path, config)
 
