@@ -6,10 +6,19 @@ import os
 from churn_predictor.data_processor import DataProcessor
 from churn_predictor.config import ProjectConfig
 
-#config = ProjectConfig.from_yaml(config_path="../project_config.yml")
-config_path = os.path.abspath("project_config.yml")
+#config_path = os.path.abspath("project_config.yml")
+#print('config_path:', config_path)
+#config = ProjectConfig.from_yaml(config_path=config_path)
+
+# Determine the environment and set the config path accordingly
+if 'DATABRICKS_RUNTIME_VERSION' in os.environ:
+    config_path = "../project_config.yml"
+else:
+    config_path = os.path.abspath("project_config.yml")
+
 print('config_path:', config_path)
 config = ProjectConfig.from_yaml(config_path=config_path)
+
 
 print("Configuration loaded:")
 print(yaml.dump(config, default_flow_style=False))
@@ -19,7 +28,6 @@ print(yaml.dump(config, default_flow_style=False))
 data_path = os.path.abspath("data/data.csv")
 print('data_path:', data_path)
 data_processor = DataProcessor(data_path, config)
-#data_processor = DataProcessor("../data/data.csv", config)
 
 # Preprocess the data
 data_processor.preprocess_data()
