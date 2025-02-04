@@ -6,23 +6,18 @@ import os
 from churn_predictor.data_processor import DataProcessor
 from churn_predictor.config import ProjectConfig
 
-
-# Get the directory of the current script
-script_dir = os.path.dirname(__file__)
-# Construct the relative path to the configuration file
-config_path = os.path.join(script_dir, '../project_config.yml')
-print('Config path:', config_path)
-config = ProjectConfig.from_yaml(config_path=config_path)
-
 #config = ProjectConfig.from_yaml(config_path="../project_config.yml")
+config_path = os.path.abspath("project_config.yml")
+print('config_path:', config_path)
+config = ProjectConfig.from_yaml(config_path=config_path)
 
 print("Configuration loaded:")
 print(yaml.dump(config, default_flow_style=False))
 
 # COMMAND ----------
 # Initialize DataProcessor
-data_path = os.path.join(script_dir, '../data/data.csv')
-print('Data path:', data_path)  
+data_path = os.path.abspath("data/data.csv")
+print('data_path:', data_path)
 data_processor = DataProcessor(data_path, config)
 #data_processor = DataProcessor("../data/data.csv", config)
 
