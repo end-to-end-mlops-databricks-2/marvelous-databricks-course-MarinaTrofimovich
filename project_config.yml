@@ -13,15 +13,9 @@ num_features:
   - IsActiveMember
 
 cat_features:
-  - France
-  - Germany
-  - Spain
-  - Female
-  - Male
-  - NumOfProducts1
-  - NumOfProducts2
-  - NumOfProducts3
-  - NumOfProducts4
+  - Geography
+  - Gender
+  - NumOfProducts
 
 target: Exited
 

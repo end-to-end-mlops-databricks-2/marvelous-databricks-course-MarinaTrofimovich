@@ -4,6 +4,7 @@ import pandas as pd
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import current_timestamp, to_utc_timestamp
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 from churn_predictor.config import ProjectConfig
 
@@ -14,6 +15,9 @@ class DataProcessor:
         self.config = config  # Store the configuration
 
     def preprocess_data(self):
+
+        print('In preprocess_data.')
+
         """Preprocess the DataFrame stored in self.df"""
         #self.df = self.df.fillna(0)  # Fill NaN values with 0
 
@@ -25,39 +29,20 @@ class DataProcessor:
         self.df = self.df.drop(self.df[(self.df["Exited"] == 1) & (self.df["Age"] > 70)].index)
         self.df.drop(self.df[(self.df["Exited"] == 1) & (self.df["CreditScore"] < 350)].index)
 
-        #create dummy variables for categorical features
-        dummy_gend = pd.get_dummies(self.df["Gender"]).astype(int)
-        dummy_gend = dummy_gend.astype(int)
-        dummy_geo = pd.get_dummies(self.df["Geography"]).astype(int)
-        dummy_geo = dummy_geo.astype(int)
+        # Initialize LabelEncoder
+        le_geography = LabelEncoder()
+        le_gender = LabelEncoder()
+        # Fit and transform the categorical features
+        df['Geography'] = le_geography.fit_transform(df['Geography'])
+        df['Gender'] = le_gender.fit_transform(df['Gender'])
 
-        #add dummy columns to the dataset
-        self.df = pd.concat([self.df, dummy_gend, dummy_geo], axis=1)
-
-        #encode  "NumOfProducts" as a categorical variable
-        dummy_np = pd.get_dummies(self.df["NumOfProducts"]).astype(int)
-        dummy_np.columns = dummy_np.columns.astype(str)
-        dummy_np = dummy_np.rename(columns={
-                                            '1': 'NumOfProducts1',
-                                            '2': 'NumOfProducts2',
-                                            '3': 'NumOfProducts3',
-                                            '4': 'NumOfProducts4'
-                                           }
-                                    )
-        #add dummy column to the dataset
-        self.df = pd.concat([self.df, dummy_np], axis=1)
-
-        #drop the original columns "Gender", "Geography", "NumOfProducts"
-        self.df.drop(["Gender", "Geography", "NumOfProducts"], axis=1, inplace=True)
-
-        print(self.df.head())
+        print(df.head())
  
         # Handle numeric features
         num_features = self.config.num_features
         for col in num_features:
             self.df[col] = pd.to_numeric(self.df[col], errors="coerce")
  
-
         # Convert categorical features to the appropriate type
         cat_features = self.config.cat_features
         for cat_col in cat_features:
