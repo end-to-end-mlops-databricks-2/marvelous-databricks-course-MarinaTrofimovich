@@ -33,10 +33,10 @@ class DataProcessor:
         le_geography = LabelEncoder()
         le_gender = LabelEncoder()
         # Fit and transform the categorical features
-        df['Geography'] = le_geography.fit_transform(df['Geography'])
-        df['Gender'] = le_gender.fit_transform(df['Gender'])
+        self.df['Geography'] = le_geography.fit_transform(self.df['Geography'])
+        self.df['Gender'] = le_gender.fit_transform(self.df['Gender'])
 
-        print(df.head())
+        print(self.df.head())
  
         # Handle numeric features
         num_features = self.config.num_features
