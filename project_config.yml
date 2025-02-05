@@ -9,15 +9,19 @@ parameters:
 num_features:
   - CreditScore
   - Age
-  - Tenure
   - Balance
-  - NumOfProducts
-  - EstimatedSalary
+  - IsActiveMember
 
 cat_features:
-  - Geography
-  - Gender
-  - IsActiveMember
+  - France
+  - Germany
+  - Spain
+  - Female
+  - Male
+  - NumOfProducts1
+  - NumOfProducts2
+  - NumOfProducts3
+  - NumOfProducts4
 
 target: Exited
 
