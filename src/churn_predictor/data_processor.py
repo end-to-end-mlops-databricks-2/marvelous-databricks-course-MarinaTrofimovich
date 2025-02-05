@@ -35,7 +35,7 @@ class DataProcessor:
         self.df = pd.concat([self.df, dummy_gend, dummy_geo], axis=1)
 
         #encode  "NumOfProducts" as a categorical variable
-        dummy_np = pd.get_dummies(self.df["NumOfProducts"])
+        dummy_np = pd.get_dummies(self.df["NumOfProducts"]).astype(int)
         dummy_np.columns = dummy_np.columns.astype(str)
         dummy_np = dummy_np.rename(columns={
                                             '1': 'NumOfProducts1',
