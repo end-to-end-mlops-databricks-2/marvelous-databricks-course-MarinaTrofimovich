@@ -13,16 +13,15 @@ class DataProcessor:
         self.config = config  # Store the configuration
 
     def preprocess_data(self):
-
-        print('In preprocess_data.')
+        print("In preprocess_data.")
 
         """Preprocess the DataFrame stored in self.df"""
-        #self.df = self.df.fillna(0)  # Fill NaN values with 0
+        # self.df = self.df.fillna(0)  # Fill NaN values with 0
 
-        #remove the columns that aren't supposed to affect the churn
+        # remove the columns that aren't supposed to affect the churn
         self.df.drop(["Tenure", "EstimatedSalary", "HasCrCard"], axis=1, inplace=True)
 
-        #remove the outliers
+        # remove the outliers
         self.df = self.df.drop(self.df[(self.df["Exited"] == 0) & (self.df["Age"] > 56)].index)
         self.df = self.df.drop(self.df[(self.df["Exited"] == 1) & (self.df["Age"] > 70)].index)
         self.df.drop(self.df[(self.df["Exited"] == 1) & (self.df["CreditScore"] < 350)].index)
@@ -31,21 +30,21 @@ class DataProcessor:
         le_geography = LabelEncoder()
         le_gender = LabelEncoder()
         # Fit and transform the categorical features
-        self.df['Geography'] = le_geography.fit_transform(self.df['Geography'])
-        self.df['Gender'] = le_gender.fit_transform(self.df['Gender'])
+        self.df["Geography"] = le_geography.fit_transform(self.df["Geography"])
+        self.df["Gender"] = le_gender.fit_transform(self.df["Gender"])
 
         print(self.df.head())
- 
+
         # Handle numeric features
         num_features = self.config.num_features
         for col in num_features:
             self.df[col] = pd.to_numeric(self.df[col], errors="coerce")
- 
+
         # Convert categorical features to the appropriate type
         cat_features = self.config.cat_features
         for cat_col in cat_features:
             self.df[cat_col] = self.df[cat_col].astype("category")
- 
+
         # Extract target and relevant features
         target = self.config.target
         relevant_columns = cat_features + num_features + [target]
