@@ -1,5 +1,6 @@
 catalog_name: mlops_prod
-schema_name: churn_predictor
+schema_name: mtrofimo
+experiment_name: /Shared/churn-predictor-basic
 
 parameters:
   learning_rate: 0.01

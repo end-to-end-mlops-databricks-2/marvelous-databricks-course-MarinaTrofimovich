@@ -9,8 +9,10 @@ from churn_predictor.config import ProjectConfig
 
 class DataProcessor:
     def __init__(self, filepath: str, config: ProjectConfig):
-        self.df = pd.read_csv(filepath)  # Read a csv file and store it as pandas df
+        #self.df = pd.read_csv(filepath)  # Read a csv file and store it as pandas df
+        self.df = pandas_df  # Store the DataFrame as self.df
         self.config = config  # Store the configuration
+        self.spark = spark
 
     def preprocess_data(self):
         print("In preprocess_data.")
@@ -55,14 +57,14 @@ class DataProcessor:
         train_set, test_set = train_test_split(self.df, test_size=test_size, random_state=random_state)
         return train_set, test_set
 
-    def save_to_catalog(self, train_set: pd.DataFrame, test_set: pd.DataFrame, spark: SparkSession):
+    def save_to_catalog(self, train_set: pd.DataFrame, test_set: pd.DataFrame):
         """Save the train and test sets into Databricks tables."""
 
-        train_set_with_timestamp = spark.createDataFrame(train_set).withColumn(
+        train_set_with_timestamp = self.spark.createDataFrame(train_set).withColumn(
             "update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC")
         )
 
-        test_set_with_timestamp = spark.createDataFrame(test_set).withColumn(
+        test_set_with_timestamp = self.spark.createDataFrame(test_set).withColumn(
             "update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC")
         )
 
@@ -74,12 +76,13 @@ class DataProcessor:
             f"{self.config.catalog_name}.{self.config.schema_name}.test_set"
         )
 
-        spark.sql(
+    def enable_change_data_feed(self):
+        self.spark.sql(
             f"ALTER TABLE {self.config.catalog_name}.{self.config.schema_name}.train_set "
             "SET TBLPROPERTIES (delta.enableChangeDataFeed = true);"
         )
 
-        spark.sql(
+        self.spark.sql(
             f"ALTER TABLE {self.config.catalog_name}.{self.config.schema_name}.test_set "
             "SET TBLPROPERTIES (delta.enableChangeDataFeed = true);"
         )
