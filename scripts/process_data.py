@@ -1,6 +1,5 @@
 import os
 import yaml
-
 from churn_predictor.config import ProjectConfig
 from churn_predictor.data_processor import DataProcessor
 
