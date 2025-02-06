@@ -1,10 +1,10 @@
-#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
-
 import yaml
 import os
 
 from churn_predictor.data_processor import DataProcessor
 from churn_predictor.config import ProjectConfig
+
+#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
 
 # Determine the environment and set the config path accordingly
 if 'DATABRICKS_RUNTIME_VERSION' in os.environ:
