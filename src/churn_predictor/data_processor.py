@@ -8,7 +8,7 @@ from churn_predictor.config import ProjectConfig
 
 
 class DataProcessor:
-    def __init__(self, filepath: str, config: ProjectConfig):
+    def __init__(self, pandas_df: pd.DataFrame, config: ProjectConfig, spark: SparkSession):
         #self.df = pd.read_csv(filepath)  # Read a csv file and store it as pandas df
         self.df = pandas_df  # Store the DataFrame as self.df
         self.config = config  # Store the configuration

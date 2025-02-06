@@ -1,4 +1,4 @@
-catalog_name: mlops_prod
+catalog_name: mlops_dev
 schema_name: mtrofimo
 experiment_name: /Shared/churn-predictor-basic
 

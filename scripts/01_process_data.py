@@ -1,4 +1,5 @@
-%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
+#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
+#%pip install loguru
 from loguru import logger
 
 import os
@@ -32,6 +33,8 @@ df = spark.read.csv(
     f"/Volumes/{config.catalog_name}/{config.schema_name}/data/data.csv", header=True, inferSchema=True
 ).toPandas()
 
+df.display()
+
 # COMMAND ----------
 # Initialize DataProcessor
 
@@ -44,7 +47,7 @@ df = spark.read.csv(
 data_processor = DataProcessor(df, config, spark)
 
 # Preprocess the data
-data_processor.preprocess()
+data_processor.preprocess_data()
 
 # Split the data
 X_train, X_test = data_processor.split_data()
