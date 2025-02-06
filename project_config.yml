@@ -1,0 +1,26 @@
+catalog_name: mlops_prod
+schema_name: churn_predictor
+
+parameters:
+  learning_rate: 0.01
+  n_estimators: 1000
+  max_depth: 6
+
+num_features:
+  - CreditScore
+  - Age
+  - Balance
+  - IsActiveMember
+
+cat_features:
+  - Geography
+  - Gender
+  - NumOfProducts
+
+target: Exited
+
+ab_test:
+  test_group: A
+  control_group: B
+
+pipeline_id: pipeline_12345
