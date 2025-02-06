@@ -29,10 +29,12 @@ else:
 
 print('data_path:', data_path)
 data_processor = DataProcessor(data_path, config)
-
+print(data_processor.df.columns)
+print(len(data_processor.df))
 # Preprocess the data
 data_processor.preprocess_data()
-
+print(data_processor.df.columns)
+print(len(data_processor.df))
 # COMMAND ----------
 # Split the data
 X_train, X_test = data_processor.split_data()
