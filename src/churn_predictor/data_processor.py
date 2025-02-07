@@ -2,14 +2,13 @@ import pandas as pd
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import current_timestamp, to_utc_timestamp
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
 
 from churn_predictor.config import ProjectConfig
 
 
 class DataProcessor:
     def __init__(self, pandas_df: pd.DataFrame, config: ProjectConfig, spark: SparkSession):
-        #self.df = pd.read_csv(filepath)  # Read a csv file and store it as pandas df
+        # self.df = pd.read_csv(filepath)  # Read a csv file and store it as pandas df
         self.df = pandas_df  # Store the DataFrame as self.df
         self.config = config  # Store the configuration
         self.spark = spark
@@ -29,11 +28,11 @@ class DataProcessor:
         self.df.drop(self.df[(self.df["Exited"] == 1) & (self.df["CreditScore"] < 350)].index)
 
         # Initialize LabelEncoder
-        #le_geography = LabelEncoder()
-        #le_gender = LabelEncoder()
+        # le_geography = LabelEncoder()
+        # le_gender = LabelEncoder()
         # Fit and transform the categorical features
-        #self.df["Geography"] = le_geography.fit_transform(self.df["Geography"])
-        #self.df["Gender"] = le_gender.fit_transform(self.df["Gender"])
+        # self.df["Geography"] = le_geography.fit_transform(self.df["Geography"])
+        # self.df["Gender"] = le_gender.fit_transform(self.df["Gender"])
 
         # Handle numeric features
         num_features = self.config.num_features
