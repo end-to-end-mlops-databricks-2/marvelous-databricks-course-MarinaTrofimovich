@@ -1,11 +1,10 @@
+#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
+%pip install loguru
 import mlflow
 from pyspark.sql import SparkSession
 
-from house_price.config import ProjectConfig, Tags
-from house_price.feature_lookup_model import FeatureLookUpModel
-
 from churn_predictor.config import ProjectConfig, Tags
-from churn_predictor.data_processor import DataProcessor
+from churn_predictor.models.basic_model import BasicModel
 
 # Configure tracking uri
 mlflow.set_tracking_uri("databricks")
@@ -17,22 +16,42 @@ tags_dict = {"git_sha": "abcd12345", "branch": "week2"}
 tags = Tags(**tags_dict)
 
 # Initialize model
-fe_model = FeatureLookUpModel(config=config, tags=tags, spark=spark)
+basic_model = BasicModel(config=config, tags=tags, spark=spark)
 
-# Create feature table
-fe_model.create_feature_table()
+# COMMAND ----------
+basic_model.load_data()
+basic_model.prepare_features()
 
-# Define house age feature function
-fe_model.define_feature_function()
+# COMMAND ----------
+# Train + log the model (runs everything including MLflow logging)
+basic_model.train()
+basic_model.log_model()
 
-# Load data
-fe_model.load_data()
+# COMMAND ----------
+run_id = mlflow.search_runs(
+    experiment_names=["/Shared/house-prices-basic"], filter_string="tags.branch='week2'"
+).run_id[0]
 
-# Perform feature engineering
-fe_model.feature_engineering()
+model = mlflow.sklearn.load_model(f"runs:/{run_id}/lightgbm-pipeline-model")
 
-# Train the model
-fe_model.train()
+# COMMAND ----------
+# Retrieve dataset for the current run
+basic_model.retrieve_current_run_dataset()
 
-# Register the model
-fe_model.register_model()
+# COMMAND ----------
+# Retrieve metadata for the current run
+basic_model.retrieve_current_run_metadata()
+
+# COMMAND ----------
+# Register model
+basic_model.register_model()
+
+# COMMAND ----------
+# Predict on the test set
+
+test_set = spark.table(f"{config.catalog_name}.{config.schema_name}.test_set").limit(10)
+
+X_test = test_set.drop(config.target).toPandas()
+
+predictions_df = basic_model.load_latest_model_and_predict(X_test)
+# COMMAND ----------

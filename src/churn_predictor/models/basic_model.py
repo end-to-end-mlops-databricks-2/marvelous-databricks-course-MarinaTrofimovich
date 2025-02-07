@@ -40,7 +40,7 @@ class BasicModel:
         self.parameters = self.config.parameters
         self.catalog_name = self.config.catalog_name
         self.schema_name = self.config.schema_name
-        self.experiment_name = self.config.experiment_name_basic
+        self.experiment_name = self.config.experiment_name
         self.tags = tags.dict()
 
     def load_data(self):
