@@ -29,13 +29,11 @@ class DataProcessor:
         self.df.drop(self.df[(self.df["Exited"] == 1) & (self.df["CreditScore"] < 350)].index)
 
         # Initialize LabelEncoder
-        le_geography = LabelEncoder()
-        le_gender = LabelEncoder()
+        #le_geography = LabelEncoder()
+        #le_gender = LabelEncoder()
         # Fit and transform the categorical features
-        self.df["Geography"] = le_geography.fit_transform(self.df["Geography"])
-        self.df["Gender"] = le_gender.fit_transform(self.df["Gender"])
-
-        print(self.df.head())
+        #self.df["Geography"] = le_geography.fit_transform(self.df["Geography"])
+        #self.df["Gender"] = le_gender.fit_transform(self.df["Gender"])
 
         # Handle numeric features
         num_features = self.config.num_features
