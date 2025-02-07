@@ -136,7 +136,7 @@ class BasicModel:
         logger.info("🔄 Registering the model in UC...")
         registered_model = mlflow.register_model(
             model_uri=f'runs:/{self.run_id}/lightgbm-pipeline-model',
-            name=f"{self.catalog_name}.{self.schema_name}.house_prices_model_basic",
+            name=f"{self.catalog_name}.{self.schema_name}.churn_predictor_model_basic",
             tags=self.tags
         )
         logger.info(f"✅ Model registered as version {registered_model.version}.")
@@ -145,7 +145,7 @@ class BasicModel:
 
         client = MlflowClient()
         client.set_registered_model_alias(
-            name=f"{self.catalog_name}.{self.schema_name}.house_prices_model_basic",
+            name=f"{self.catalog_name}.{self.schema_name}.churn_predictor_model_basic",
             alias="latest-model",
             version=latest_version
         )
@@ -180,7 +180,7 @@ class BasicModel:
         """
         logger.info("🔄 Loading model from MLflow alias 'production'...")
 
-        model_uri = f"models:/{self.catalog_name}.{self.schema_name}.house_prices_model_basic@latest-model"
+        model_uri = f"models:/{self.catalog_name}.{self.schema_name}.churn_predictor_model_basic@latest-model"
         model = mlflow.sklearn.load_model(model_uri)
 
         logger.info("✅ Model successfully loaded.")

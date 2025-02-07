@@ -1,4 +1,4 @@
-#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
+%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
 %pip install loguru
 import mlflow
 from pyspark.sql import SparkSession
@@ -29,7 +29,7 @@ basic_model.log_model()
 
 # COMMAND ----------
 run_id = mlflow.search_runs(
-    experiment_names=["/Shared/house-prices-basic"], filter_string="tags.branch='week2'"
+    experiment_names=["/Shared/churn-predictor-basic"], filter_string="tags.branch='week2'"
 ).run_id[0]
 
 model = mlflow.sklearn.load_model(f"runs:/{run_id}/lightgbm-pipeline-model")

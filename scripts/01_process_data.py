@@ -1,5 +1,5 @@
 #%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
-#%pip install loguru
+%pip install loguru
 from loguru import logger
 
 import os
