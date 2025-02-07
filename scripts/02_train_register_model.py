@@ -1,7 +1,8 @@
-# %pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
-# %pip install loguru
+#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
+#%pip install loguru
 
 import mlflow
+import os
 from pyspark.sql import SparkSession
 
 from churn_predictor.config import ProjectConfig, Tags
@@ -11,7 +12,16 @@ from churn_predictor.models.basic_model import BasicModel
 mlflow.set_tracking_uri("databricks")
 mlflow.set_registry_uri("databricks-uc")
 
-config = ProjectConfig.from_yaml(config_path="../project_config.yml")
+#config = ProjectConfig.from_yaml(config_path="../project_config.yml")
+
+# Determine the environment and set the config path accordingly
+if "DATABRICKS_RUNTIME_VERSION" in os.environ:
+    config_path = "../project_config.yml"
+else:
+    config_path = os.path.abspath("project_config.yml")
+
+config = ProjectConfig.from_yaml(config_path=config_path)
+
 spark = SparkSession.builder.getOrCreate()
 tags_dict = {"git_sha": "abcd12345", "branch": "week2"}
 tags = Tags(**tags_dict)
