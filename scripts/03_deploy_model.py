@@ -1,7 +1,11 @@
-from loguru import logger
+#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
+#%pip install loguru
 
-from house_price.config import ProjectConfig
-from house_price.serving.fe_model_serving import FeatureLookupServing
+from loguru import logger
+import os
+
+from churn_predictor.config import ProjectConfig
+from churn_predictor.serving.model_serving import ModelServing
 
 # Load project config
 # Determine the environment and set the config path accordingly
