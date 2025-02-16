@@ -5,8 +5,8 @@ import time
 from typing import Dict, List
 
 import requests
-from pyspark.dbutils import DBUtils
-from pyspark.sql import SparkSession
+from pyspark.dbutils import DBUtils  # noqa: F401
+from pyspark.sql import SparkSession  # noqa: F401
 
 from churn_predictor.config import ProjectConfig
 
@@ -18,6 +18,13 @@ else:
     config_path = os.path.abspath("project_config.yml")
 
 config = ProjectConfig.from_yaml(config_path=config_path)
+
+
+# Initialize Spark session
+spark = SparkSession.builder.appName("ChurnPredictor").getOrCreate()
+
+# Initialize DBUtils
+dbutils = DBUtils(spark)
 
 # get environment variables
 os.environ["DBR_TOKEN"] = dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiToken().get()
