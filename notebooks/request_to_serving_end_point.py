@@ -1,14 +1,12 @@
-#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
+# %pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
 
-from pyspark.sql import SparkSession
-from churn_predictor.config import ProjectConfig
-
+import os
+import time
 from typing import Dict, List
 
 import requests
 
-import os
-import time
+from churn_predictor.config import ProjectConfig
 
 # Load project config
 # Determine the environment and set the config path accordingly
@@ -24,15 +22,7 @@ os.environ["DBR_TOKEN"] = dbutils.notebook.entry_point.getDbutils().notebook().g
 os.environ["DBR_HOST"] = spark.conf.get("spark.databricks.workspaceUrl")
 
 # Create a sample request body
-required_columns = [
-    "Geography",
-    "Gender",
-    "NumOfProducts",
-    "CreditScore",
-    "Age",
-    "Balance",
-    "IsActiveMember"
-]
+required_columns = ["Geography", "Gender", "NumOfProducts", "CreditScore", "Age", "Balance", "IsActiveMember"]
 
 # Sample 1000 records from the training set
 test_set = spark.table(f"{config.catalog_name}.{config.schema_name}.test_set").toPandas()

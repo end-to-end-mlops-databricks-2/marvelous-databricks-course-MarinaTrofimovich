@@ -1,8 +1,9 @@
-#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
-#%pip install loguru
+# %pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
+# %pip install loguru
+
+import os
 
 from loguru import logger
-import os
 
 from churn_predictor.config import ProjectConfig
 from churn_predictor.serving.model_serving import ModelServing
@@ -23,10 +24,11 @@ schema_name = config.schema_name
 endpoint_name = "churn_predictor-model-serving"
 
 # Initialize feature store manager
-model_serving = ModelServing(model_name=f"{catalog_name}.{schema_name}.churn_predictor_model_basic",
-                             endpoint_name="churn_predictor-model-serving")
+model_serving = ModelServing(
+    model_name=f"{catalog_name}.{schema_name}.churn_predictor_model_basic",
+    endpoint_name="churn_predictor-model-serving",
+)
 
 # COMMAND ----------
 # Deploy the model serving endpoint
 model_serving.deploy_or_update_serving_endpoint()
-
