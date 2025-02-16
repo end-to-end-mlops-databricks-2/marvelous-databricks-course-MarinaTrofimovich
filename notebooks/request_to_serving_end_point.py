@@ -5,6 +5,8 @@ import time
 from typing import Dict, List
 
 import requests
+from pyspark.dbutils import DBUtils
+from pyspark.sql import SparkSession
 
 from churn_predictor.config import ProjectConfig
 
