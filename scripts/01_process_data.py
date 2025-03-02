@@ -1,6 +1,8 @@
 # %pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
 # %pip install loguru
 
+import argparse
+
 import os
 
 import yaml
@@ -8,16 +10,30 @@ from loguru import logger
 from pyspark.sql import SparkSession
 
 from churn_predictor.config import ProjectConfig
-from churn_predictor.data_processor import DataProcessor
+from churn_predictor.data_processor import DataProcessor, generate_synthetic_data
 
-# Determine the environment and set the config path accordingly
-if "DATABRICKS_RUNTIME_VERSION" in os.environ:
-    config_path = "../project_config.yml"
-else:
-    config_path = os.path.abspath("project_config.yml")
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--root_path",
+    action="store",
+    default=None,
+    type=str,
+    required=True,
+)
 
-print("config_path:", config_path)
-config = ProjectConfig.from_yaml(config_path=config_path)
+parser.add_argument(
+    "--env",
+    action="store",
+    default=None,
+    type=str,
+    required=True,
+)
+
+args = parser.parse_args()
+root_path = args.root_path
+config_path = f"{root_path}/files/project_config.yml"
+
+config = ProjectConfig.from_yaml(config_path=config_path, env=args.env)
 
 logger.info("Configuration loaded:")
 logger.info(yaml.dump(config, default_flow_style=False))
@@ -34,16 +50,15 @@ df = spark.read.csv(
 
 df.display()
 
-# COMMAND ----------
-# Initialize DataProcessor
+# Generate synthetic data
+### This is mimicking a new data arrival. In real world, this would be a new batch of data.
+# df is passed to infer schema
+synthetic_df = generate_synthetic_data(df, num_rows=100)
+synthetic_df.display()
+logger.info("Synthetic data generated.")
 
-# if "DATABRICKS_RUNTIME_VERSION" in os.environ:
-#    data_path = "../data/data.csv"
-# else:
-#    data_path = os.path.abspath("data/data.csv")
-
 # Initialize DataProcessor
-data_processor = DataProcessor(df, config, spark)
+data_processor = DataProcessor(synthetic_df, config, spark)
 
 # Preprocess the data
 data_processor.preprocess_data()

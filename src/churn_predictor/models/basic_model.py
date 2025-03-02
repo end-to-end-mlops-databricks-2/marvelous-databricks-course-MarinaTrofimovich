@@ -186,3 +186,44 @@ class BasicModel:
 
         # Return predictions as a DataFrame
         return predictions
+    
+    def model_improved(self, test_set: DataFrame):
+        """
+        Evaluate the model performance on the test set.
+        """
+        X_test = test_set.drop(self.config.target)
+
+        predictions_latest = self.load_latest_model_and_predict(X_test).withColumnRenamed(
+            "prediction", "prediction_latest"
+        )
+
+        current_model_uri = f"runs:/{self.run_id}/lightgbm-pipeline-model"
+        predictions_current = self.fe.score_batch(model_uri=current_model_uri, df=X_test).withColumnRenamed(
+            "prediction", "prediction_current"
+        )
+
+        test_set = test_set.select("CustomerId", "Exited")
+
+        logger.info("Predictions are ready.")
+
+        # Join the DataFrames on the 'id' column
+        df = test_set.join(predictions_current, on="CustomerId").join(predictions_latest, on="CustomerId")
+
+        # Calculate the absolute error for each model
+        df = df.withColumn("error_current", F.abs(df["Exited"] - df["prediction_current"]))
+        df = df.withColumn("error_latest", F.abs(df["Exited"] - df["prediction_latest"]))
+
+        # Calculate the Mean Absolute Error (MAE) for each model
+        mae_current = df.agg(F.mean("error_current")).collect()[0][0]
+        mae_latest = df.agg(F.mean("error_latest")).collect()[0][0]
+
+        # Compare models based on MAE
+        logger.info(f"MAE for Current Model: {mae_current}")
+        logger.info(f"MAE for Latest Model: {mae_latest}")
+
+        if mae_current < mae_latest:
+            logger.info("Current Model performs better. Registering new model.")
+            return True
+        else:
+            logger.info("New Model performs worse. Keeping the old model.")
+            return False
