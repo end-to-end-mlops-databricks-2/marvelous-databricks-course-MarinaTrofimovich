@@ -90,7 +90,7 @@ class DataProcessor:
 
 def generate_synthetic_data(df, num_rows=10):
     """Generates synthetic data based on the distribution of the input DataFrame."""
-    synthetic_data = pd.DataFrame()
+    synthetic_data = pd.DataFrame(columns=df.columns)
 
     for column in df.columns:
         if column == "CustomerId" or column == "RowNumber":
