@@ -12,6 +12,13 @@ from pyspark.sql import SparkSession
 from churn_predictor.config import ProjectConfig
 from churn_predictor.data_processor import DataProcessor, generate_synthetic_data
 
+# Determine the environment and set the config path accordingly
+if "DATABRICKS_RUNTIME_VERSION" in os.environ:
+    config_path = "../project_config.yml"
+else:
+    config_path = os.path.abspath("project_config.yml")
+
+'''
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--root_path",
@@ -32,8 +39,9 @@ parser.add_argument(
 args = parser.parse_args()
 root_path = args.root_path
 config_path = f"{root_path}/files/project_config.yml"
+'''
 
-config = ProjectConfig.from_yaml(config_path=config_path, env=args.env)
+config = ProjectConfig.from_yaml(config_path=config_path, env='dev')#args.env)
 
 logger.info("Configuration loaded:")
 logger.info(yaml.dump(config, default_flow_style=False))

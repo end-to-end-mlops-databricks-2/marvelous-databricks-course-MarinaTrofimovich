@@ -1,3 +1,7 @@
+import datetime
+import time
+
+import numpy as np
 import pandas as pd
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import current_timestamp, to_utc_timestamp
@@ -89,11 +93,14 @@ def generate_synthetic_data(df, num_rows=10):
     synthetic_data = pd.DataFrame()
 
     for column in df.columns:
-        if column == "CustomerId":
+        if column == "CustomerId" or column == "RowNumber":
             continue
 
-        if pd.api.types.is_numeric_dtype(df[column]):
-            synthetic_data[column] = np.random.normal(df[column].mean(), df[column].std(), num_rows)
+        if column == "Exited":
+            synthetic_data[column] = np.random.choice([0, 1], num_rows)
+
+        elif pd.api.types.is_numeric_dtype(df[column]):
+            synthetic_data[column] = np.abs(np.random.normal(df[column].mean(), df[column].std(), num_rows))
 
         elif pd.api.types.is_categorical_dtype(df[column]) or pd.api.types.is_object_dtype(df[column]):
             synthetic_data[column] = np.random.choice(
@@ -124,6 +131,12 @@ def generate_synthetic_data(df, num_rows=10):
         synthetic_data[col] = synthetic_data[col].astype(np.int32)
 
     synthetic_data["EstimatedSalary"] = synthetic_data["EstimatedSalary"].astype(np.float64)
+
+    # Find the maximum RowNumber in the input DataFrame
+    max_row_number = df["RowNumber"].max() if "RowNumber" in df.columns else 0
+
+    # Create the RowNumber column starting from the next integer after the max RowNumber in df
+    synthetic_data["RowNumber"] = range(max_row_number + 1, max_row_number + 1 + num_rows)
 
     timestamp_base = int(time.time() * 1000)
     synthetic_data["CustomerId"] = [str(timestamp_base + i) for i in range(num_rows)]
