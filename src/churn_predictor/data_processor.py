@@ -84,7 +84,7 @@ class DataProcessor:
             "SET TBLPROPERTIES (delta.enableChangeDataFeed = true);"
         )
 
-    def generate_synthetic_data(df, num_rows=10):
+def generate_synthetic_data(df, num_rows=10):
     """Generates synthetic data based on the distribution of the input DataFrame."""
     synthetic_data = pd.DataFrame()
 
@@ -93,7 +93,7 @@ class DataProcessor:
             continue
 
         if pd.api.types.is_numeric_dtype(df[column]):
-                synthetic_data[column] = np.random.normal(df[column].mean(), df[column].std(), num_rows)
+            synthetic_data[column] = np.random.normal(df[column].mean(), df[column].std(), num_rows)
 
         elif pd.api.types.is_categorical_dtype(df[column]) or pd.api.types.is_object_dtype(df[column]):
             synthetic_data[column] = np.random.choice(
