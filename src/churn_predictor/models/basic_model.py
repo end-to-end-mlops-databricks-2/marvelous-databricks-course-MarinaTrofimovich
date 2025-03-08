@@ -201,7 +201,7 @@ class BasicModel:
         X_test_wt = X_test_sp_wt.toPandas()
         
         predictions_latest = self.load_latest_model_and_predict(X_test)
-        predictions_latest_df = pd.DataFrame(predictions_latest, columns=["prediction"])
+        predictions_latest_df = pd.DataFrame(predictions_latest)
         predictions_latest_df = predictions_latest_df.rename(columns={"prediction": "prediction_latest"})
         logger.info("predictions_latest")
         logger.info(predictions_latest_df)
@@ -212,7 +212,7 @@ class BasicModel:
         current_model = mlflow.sklearn.load_model(current_model_uri)
         logger.info("✅ Model successfully loaded.")
         predictions_current = current_model.predict(X_test)
-        predictions_current_df = pd.DataFrame(predictions_current, columns=["prediction"])
+        predictions_current_df = pd.DataFrame(predictions_current)
         predictions_current_df = predictions_current_df.rename(columns={"prediction": "prediction_current"})
         logger.info("predictions_current")
         logger.info(predictions_current)
