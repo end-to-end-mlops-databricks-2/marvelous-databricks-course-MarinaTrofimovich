@@ -207,7 +207,9 @@ class BasicModel:
 
 
         current_model_uri = f"runs:/{self.run_id}/lightgbm-pipeline-model"
-        predictions_current = self.fe.score_batch(model_uri=current_model_uri, df=X_test)
+        current_model = mlflow.sklearn.load_model(current_model_uri)
+        logger.info("✅ Model successfully loaded.")
+        predictions_current = model.predict(X_test)
         predictions_current = predictions_current.rename(columns={"prediction": "prediction_current"})
         logger.info("predictions_current")
         logger.info(predictions_current)

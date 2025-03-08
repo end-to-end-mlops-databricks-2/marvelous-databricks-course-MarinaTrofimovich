@@ -86,6 +86,7 @@ basic_model.prepare_features()
 # COMMAND ----------
 # Train + log the model (runs everything including MLflow logging)
 basic_model.train()
+basic_model.log_model()
 
 # Evaluate model
 # Load test set from Delta table
@@ -115,8 +116,6 @@ else:
 
 
 
-
-basic_model.log_model()
 
 # COMMAND ----------
 run_id = mlflow.search_runs(
