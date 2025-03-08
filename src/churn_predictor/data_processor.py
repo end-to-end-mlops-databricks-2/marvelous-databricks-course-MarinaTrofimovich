@@ -59,7 +59,7 @@ class DataProcessor:
         return train_set, test_set
 
     def save_to_catalog(self, train_set: pd.DataFrame, test_set: pd.DataFrame):
-    """Save the train and test sets into Databricks tables."""
+        """Save the train and test sets into Databricks tables."""
 
         train_set_with_timestamp = self.spark.createDataFrame(train_set).withColumn(
             "update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC")
