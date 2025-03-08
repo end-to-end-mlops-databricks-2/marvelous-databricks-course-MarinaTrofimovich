@@ -192,11 +192,13 @@ class BasicModel:
         Evaluate the model performance on the test set.
         """
         #X_test = test_set.drop(self.config.target)
-        X_test_sp = test_set.select("*")
+        test_set_wot = test_set.drop(self.config.target)
+        X_test_sp = test_set_wot.select("*")
+        X_test_sp_wt = test_set.select("*")
         X_test_sp.display()
         
         X_test = X_test_sp.toPandas()
-
+        X_test_wt = X_test_sp_wt.toPandas()
         
         predictions_latest = self.load_latest_model_and_predict(X_test)
         predictions_latest_df = pd.DataFrame(predictions_latest, columns=["prediction"])
@@ -217,13 +219,13 @@ class BasicModel:
         predictions_current_df.display()
 
         #test_set = test_set.select("CustomerId", "Exited")
-        X_test = X_test.loc[:, ["CustomerId", "Exited"]]
+        X_test_wt = X_test_wt.loc[:, ["CustomerId", "Exited"]]
     
         logger.info("Predictions are ready.")
 
         # Join the DataFrames on the 'id' column
         #df = test_set.join(predictions_current, on="CustomerId").join(predictions_latest, on="CustomerId")
-        df = X_test.merge(predictions_current, on="CustomerId").merge(predictions_latest, on="CustomerId")
+        df = X_test_wt.merge(predictions_current, on="CustomerId").merge(predictions_latest, on="CustomerId")
 
         # Calculate the absolute error for each model
         #df = df.withColumn("error_current", F.abs(df["Exited"] - df["prediction_current"]))
