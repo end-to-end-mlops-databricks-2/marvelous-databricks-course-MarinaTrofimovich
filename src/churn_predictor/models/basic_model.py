@@ -225,7 +225,7 @@ class BasicModel:
 
         # Join the DataFrames on the 'id' column
         #df = test_set.join(predictions_current, on="CustomerId").join(predictions_latest, on="CustomerId")
-        df = X_test_wt.merge(predictions_current, on="CustomerId").merge(predictions_latest, on="CustomerId")
+        df = X_test_wt.merge(predictions_current_df, on="CustomerId").merge(predictions_latest_df, on="CustomerId")
 
         # Calculate the absolute error for each model
         #df = df.withColumn("error_current", F.abs(df["Exited"] - df["prediction_current"]))
