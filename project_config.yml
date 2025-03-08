@@ -1,15 +1,14 @@
-prd:
-  catalog_name: mlops_prod
-  schema_name: mtrofimo
-  pipeline_id: 1818db79-f551-49bb-ad4f-f61cac9d91fc
-acc:
-  catalog_name: mlops_acc
-  schema_name: mtrofimo
-  pipeline_id: 94748db79-f551-49bb-ad4f-f61cac9d91fc
-dev:
-  catalog_name: mlops_dev
-  schema_name: mtrofimo
-  pipeline_id: 0498db79-f551-49bb-ad4f-finac9d91fc
+#prd:
+#  catalog_name: mlops_prod
+#  schema_name: mtrofimo
+#acc:
+#  catalog_name: mlops_acc
+#  schema_name: mtrofimo
+#dev:
+#  catalog_name: mlops_dev
+#  schema_name: mtrofimo
+catalog_name: mlops_dev
+schema_name: mtrofimo
 
 experiment_name: /Shared/churn-predictor-basic
 

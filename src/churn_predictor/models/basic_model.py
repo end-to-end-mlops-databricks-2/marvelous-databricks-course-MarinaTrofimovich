@@ -192,15 +192,21 @@ class BasicModel:
         Evaluate the model performance on the test set.
         """
         X_test = test_set.drop(self.config.target)
+        logger.info("X_test")
+        X_test.display()
 
         predictions_latest = self.load_latest_model_and_predict(X_test).withColumnRenamed(
             "prediction", "prediction_latest"
         )
+        logger.info("predictions_latest")
+        predictions_latest.display()
 
         current_model_uri = f"runs:/{self.run_id}/lightgbm-pipeline-model"
         predictions_current = self.fe.score_batch(model_uri=current_model_uri, df=X_test).withColumnRenamed(
             "prediction", "prediction_current"
         )
+        logger.info("predictions_current")
+        predictions_current.display()
 
         test_set = test_set.select("CustomerId", "Exited")
 
