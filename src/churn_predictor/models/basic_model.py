@@ -197,16 +197,14 @@ class BasicModel:
         
         X_test = X_test_sp.toPandas()
 
-        predictions_latest = self.load_latest_model_and_predict(X_test).withColumnRenamed(
-            "prediction", "prediction_latest"
-        )
+        predictions_latest = self.load_latest_model_and_predict(X_test)
+        predictions_latest = predictions_latest.rename(columns={"prediction": "prediction_latest"})
         logger.info("predictions_latest")
         predictions_latest.display()
 
         current_model_uri = f"runs:/{self.run_id}/lightgbm-pipeline-model"
-        predictions_current = self.fe.score_batch(model_uri=current_model_uri, df=X_test).withColumnRenamed(
-            "prediction", "prediction_current"
-        )
+        predictions_current = self.fe.score_batch(model_uri=current_model_uri, df=X_test)
+        predictions_current = predictions_current.rename(columns={"prediction": "prediction_latest"})
         logger.info("predictions_current")
         predictions_current.display()
 
