@@ -59,24 +59,30 @@ class DataProcessor:
         return train_set, test_set
 
     def save_to_catalog(self, train_set: pd.DataFrame, test_set: pd.DataFrame):
-        """Save the train and test sets into Databricks tables."""
+    """Save the train and test sets into Databricks tables."""
 
-        train_set_with_timestamp = self.spark.createDataFrame(train_set).withColumn(
-            "update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC")
-        )
+    # Ensure the Geography column has the same data type in both train_set and test_set
+    if "Geography" in train_set.columns and "Geography" in test_set.columns:
+        train_set["Geography"] = train_set["Geography"].astype(str)
+        test_set["Geography"] = test_set["Geography"].astype(str)
 
-        test_set_with_timestamp = self.spark.createDataFrame(test_set).withColumn(
-            "update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC")
-        )
+    train_set_with_timestamp = self.spark.createDataFrame(train_set).withColumn(
+        "update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC")
+    )
 
-        train_set_with_timestamp.write.mode("append").saveAsTable(
-            f"{self.config.catalog_name}.{self.config.schema_name}.train_set"
-        )
+    test_set_with_timestamp = self.spark.createDataFrame(test_set).withColumn(
+        "update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC")
+    )
 
-        test_set_with_timestamp.write.mode("append").saveAsTable(
-            f"{self.config.catalog_name}.{self.config.schema_name}.test_set"
-        )
+    train_set_with_timestamp.write.mode("append").saveAsTable(
+        f"{self.config.catalog_name}.{self.config.schema_name}.train_set"
+    )
 
+    test_set_with_timestamp.write.mode("append").saveAsTable(
+        f"{self.config.catalog_name}.{self.config.schema_name}.test_set"
+    )
+
+    
     def enable_change_data_feed(self):
         self.spark.sql(
             f"ALTER TABLE {self.config.catalog_name}.{self.config.schema_name}.train_set "
@@ -87,6 +93,7 @@ class DataProcessor:
             f"ALTER TABLE {self.config.catalog_name}.{self.config.schema_name}.test_set "
             "SET TBLPROPERTIES (delta.enableChangeDataFeed = true);"
         )
+
 
 def generate_synthetic_data(df, num_rows=10):
     """Generates synthetic data based on the distribution of the input DataFrame."""
@@ -135,7 +142,6 @@ def generate_synthetic_data(df, num_rows=10):
     if "Geography" in df.columns:
         synthetic_data["Geography"] = synthetic_data["Geography"].astype(df["Geography"].dtype)
 
-
     # Find the maximum RowNumber in the input DataFrame
     max_row_number = df["RowNumber"].max() if "RowNumber" in df.columns else 0
 
@@ -144,7 +150,5 @@ def generate_synthetic_data(df, num_rows=10):
 
     timestamp_base = int(time.time() * 1000)
     synthetic_data["CustomerId"] = [str(timestamp_base + i) for i in range(num_rows)]
-
-    
 
     return synthetic_data
