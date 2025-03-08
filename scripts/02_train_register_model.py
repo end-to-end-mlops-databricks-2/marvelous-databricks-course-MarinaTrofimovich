@@ -97,7 +97,7 @@ test_set.display()
 
 #test_set_pd = test_set.toPandas()
 
-model_improved = basic_model.model_improved(test_set=test_set_pd)
+model_improved = basic_model.model_improved(test_set=test_set)
 logger.info("Model evaluation completed, model improved: ", model_improved)
 
 if model_improved:
