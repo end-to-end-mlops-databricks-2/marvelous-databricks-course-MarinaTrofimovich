@@ -41,7 +41,7 @@ root_path = args.root_path
 config_path = f"{root_path}/files/project_config.yml"
 '''
 
-config = ProjectConfig.from_yaml(config_path=config_path, env='dev')#args.env)
+config = ProjectConfig.from_yaml(config_path=config_path)#, env=args.env)
 
 logger.info("Configuration loaded:")
 logger.info(yaml.dump(config, default_flow_style=False))

@@ -50,8 +50,9 @@ class DataProcessor:
 
         # Extract target and relevant features
         target = self.config.target
-        relevant_columns = cat_features + num_features + [target]
+        relevant_columns = cat_features + num_features + [target] +  + ["CustomerId"]
         self.df = self.df[relevant_columns]
+        self.df.display()
 
     def split_data(self, test_size=0.2, random_state=42):
         """Split the DataFrame (self.df) into training and test sets."""
