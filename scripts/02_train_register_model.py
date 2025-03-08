@@ -1,5 +1,5 @@
-%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
-%pip install loguru
+#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
+#%pip install loguru
 
 import argparse
 
@@ -12,16 +12,18 @@ from pyspark.sql import SparkSession
 from churn_predictor.config import ProjectConfig, Tags
 from churn_predictor.models.basic_model import BasicModel
 
+from loguru import logger
+
 # Configure tracking uri
 mlflow.set_tracking_uri("databricks")
 mlflow.set_registry_uri("databricks-uc")
 
 # Determine the environment and set the config path accordingly
-if "DATABRICKS_RUNTIME_VERSION" in os.environ:
-    config_path = "../project_config.yml"
-else:
-    config_path = os.path.abspath("project_config.yml")
-'''
+#if "DATABRICKS_RUNTIME_VERSION" in os.environ:
+#    config_path = "../project_config.yml"
+#else:
+#    config_path = os.path.abspath("project_config.yml")
+
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--root_path",
@@ -67,13 +69,13 @@ parser.add_argument(
 args = parser.parse_args()
 root_path = args.root_path
 config_path = f"{root_path}/files/project_config.yml"
-'''
-config = ProjectConfig.from_yaml(config_path=config_path)#, env=args.env)
+
+config = ProjectConfig.from_yaml(config_path=config_path, env=args.env)
 
 spark = SparkSession.builder.getOrCreate()
 dbutils = DBUtils(spark)
-#tags_dict = {"git_sha": args.git_sha, "branch": args.branch, "job_run_id": args.job_run_id}
-tags_dict = {"git_sha": 'git_sha', "branch": 'branch', "job_run_id": 'job_run_id'}
+tags_dict = {"git_sha": args.git_sha, "branch": args.branch, "job_run_id": args.job_run_id}
+#tags_dict = {"git_sha": 'git_sha', "branch": 'branch', "job_run_id": 'job_run_id'}
 tags = Tags(**tags_dict)
 
 # Initialize model
@@ -108,40 +110,3 @@ if model_improved:
 
 else:
     dbutils.jobs.taskValues.set(key="model_updated", value=0)
-
-
-
-
-
-
-
-
-
-# COMMAND ----------
-run_id = mlflow.search_runs(
-    experiment_names=["/Shared/churn-predictor-basic"], filter_string="tags.branch='week2'"
-).run_id[0]
-
-model = mlflow.sklearn.load_model(f"runs:/{run_id}/lightgbm-pipeline-model")
-
-# COMMAND ----------
-# Retrieve dataset for the current run
-basic_model.retrieve_current_run_dataset()
-
-# COMMAND ----------
-# Retrieve metadata for the current run
-basic_model.retrieve_current_run_metadata()
-
-# COMMAND ----------
-# Register model
-basic_model.register_model()
-
-# COMMAND ----------
-# Predict on the test set
-
-test_set = spark.table(f"{config.catalog_name}.{config.schema_name}.test_set").limit(10)
-
-X_test = test_set.drop(config.target).toPandas()
-
-predictions_df = basic_model.load_latest_model_and_predict(X_test)
-# COMMAND ----------
