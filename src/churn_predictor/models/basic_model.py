@@ -210,25 +210,34 @@ class BasicModel:
         current_model = mlflow.sklearn.load_model(current_model_uri)
         logger.info("✅ Model successfully loaded.")
         predictions_current = current_model.predict(X_test)
-        predictions_current = predictions_current.rename(columns={"prediction": "prediction_current"})
+        predictions_current_df = pd.DataFrame(predictions_current, columns=["prediction"])
+        predictions_current_df = predictions_current_df.rename(columns={"prediction": "prediction_current"})
         logger.info("predictions_current")
         logger.info(predictions_current)
-        predictions_current.display()
+        predictions_current_df.display()
 
-        test_set = test_set.select("CustomerId", "Exited")
-
+        #test_set = test_set.select("CustomerId", "Exited")
+        X_test = X_test.loc[:, ["CustomerId", "Exited"]]
+    
         logger.info("Predictions are ready.")
 
         # Join the DataFrames on the 'id' column
-        df = test_set.join(predictions_current, on="CustomerId").join(predictions_latest, on="CustomerId")
+        #df = test_set.join(predictions_current, on="CustomerId").join(predictions_latest, on="CustomerId")
+        df = X_test.merge(predictions_current, on="CustomerId").merge(predictions_latest, on="CustomerId")
 
         # Calculate the absolute error for each model
-        df = df.withColumn("error_current", F.abs(df["Exited"] - df["prediction_current"]))
-        df = df.withColumn("error_latest", F.abs(df["Exited"] - df["prediction_latest"]))
+        #df = df.withColumn("error_current", F.abs(df["Exited"] - df["prediction_current"]))
+        #df = df.withColumn("error_latest", F.abs(df["Exited"] - df["prediction_latest"]))
+        df = df.assign(
+                        error_current=(df["Exited"] - df["prediction_current"]).abs(),
+                        error_latest=(df["Exited"] - df["prediction_latest"]).abs()
+                      )
 
         # Calculate the Mean Absolute Error (MAE) for each model
-        mae_current = df.agg(F.mean("error_current")).collect()[0][0]
-        mae_latest = df.agg(F.mean("error_latest")).collect()[0][0]
+        #mae_current = df.agg(F.mean("error_current")).collect()[0][0]
+        #mae_latest = df.agg(F.mean("error_latest")).collect()[0][0]
+        mae_current = df["error_current"].mean()
+        mae_latest = df["error_latest"].mean()
 
         # Compare models based on MAE
         logger.info(f"MAE for Current Model: {mae_current}")
