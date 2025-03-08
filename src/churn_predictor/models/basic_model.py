@@ -187,7 +187,7 @@ class BasicModel:
         # Return predictions as a DataFrame
         return predictions
     
-    def model_improved(self, test_set: DataFrame):
+    def model_improved(self, test_set):
         """
         Evaluate the model performance on the test set.
         """
