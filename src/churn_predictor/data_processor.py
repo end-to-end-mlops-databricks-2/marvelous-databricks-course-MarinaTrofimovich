@@ -61,26 +61,21 @@ class DataProcessor:
     def save_to_catalog(self, train_set: pd.DataFrame, test_set: pd.DataFrame):
     """Save the train and test sets into Databricks tables."""
 
-    # Ensure the Geography column has the same data type in both train_set and test_set
-    if "Geography" in train_set.columns and "Geography" in test_set.columns:
-        train_set["Geography"] = train_set["Geography"].astype(str)
-        test_set["Geography"] = test_set["Geography"].astype(str)
+        train_set_with_timestamp = self.spark.createDataFrame(train_set).withColumn(
+            "update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC")
+        )
 
-    train_set_with_timestamp = self.spark.createDataFrame(train_set).withColumn(
-        "update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC")
-    )
+        test_set_with_timestamp = self.spark.createDataFrame(test_set).withColumn(
+            "update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC")
+        )
 
-    test_set_with_timestamp = self.spark.createDataFrame(test_set).withColumn(
-        "update_timestamp_utc", to_utc_timestamp(current_timestamp(), "UTC")
-    )
+        train_set_with_timestamp.write.mode("append").saveAsTable(
+            f"{self.config.catalog_name}.{self.config.schema_name}.train_set"
+        )
 
-    train_set_with_timestamp.write.mode("append").saveAsTable(
-        f"{self.config.catalog_name}.{self.config.schema_name}.train_set"
-    )
-
-    test_set_with_timestamp.write.mode("append").saveAsTable(
-        f"{self.config.catalog_name}.{self.config.schema_name}.test_set"
-    )
+        test_set_with_timestamp.write.mode("append").saveAsTable(
+            f"{self.config.catalog_name}.{self.config.schema_name}.test_set"
+        )
 
     
     def enable_change_data_feed(self):
