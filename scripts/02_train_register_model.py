@@ -1,5 +1,5 @@
-%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
-%pip install loguru
+#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
+#%pip install loguru
 
 import argparse
 
@@ -95,7 +95,9 @@ test_set = spark.table(f"{config.catalog_name}.{config.schema_name}.test_set").l
 test_set = test_set.drop("Exited")
 test_set.display()
 
-model_improved = basic_model.model_improved(test_set=test_set)
+#test_set_pd = test_set.toPandas()
+
+model_improved = basic_model.model_improved(test_set=test_set_pd)
 logger.info("Model evaluation completed, model improved: ", model_improved)
 
 if model_improved:
