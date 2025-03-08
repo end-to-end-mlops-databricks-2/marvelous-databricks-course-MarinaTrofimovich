@@ -193,6 +193,7 @@ class BasicModel:
         """
         #X_test = test_set.drop(self.config.target)
         X_test = test_set.select("*")
+        X_test.display()
 
         predictions_latest = self.load_latest_model_and_predict(X_test).withColumnRenamed(
             "prediction", "prediction_latest"
