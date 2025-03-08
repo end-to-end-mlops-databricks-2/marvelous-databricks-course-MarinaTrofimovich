@@ -132,6 +132,10 @@ def generate_synthetic_data(df, num_rows=10):
 
     synthetic_data["EstimatedSalary"] = synthetic_data["EstimatedSalary"].astype(np.float64)
 
+    if "Geography" in df.columns:
+        synthetic_data["Geography"] = synthetic_data["Geography"].astype(df["Geography"].dtype)
+
+
     # Find the maximum RowNumber in the input DataFrame
     max_row_number = df["RowNumber"].max() if "RowNumber" in df.columns else 0
 
@@ -140,5 +144,7 @@ def generate_synthetic_data(df, num_rows=10):
 
     timestamp_base = int(time.time() * 1000)
     synthetic_data["CustomerId"] = [str(timestamp_base + i) for i in range(num_rows)]
+
+    
 
     return synthetic_data
