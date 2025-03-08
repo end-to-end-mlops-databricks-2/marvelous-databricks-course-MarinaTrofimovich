@@ -95,8 +95,6 @@ test_set = spark.table(f"{config.catalog_name}.{config.schema_name}.test_set").l
 test_set = test_set.drop("Exited")
 test_set.display()
 
-#test_set_pd = test_set.toPandas()
-
 model_improved = basic_model.model_improved(test_set=test_set)
 logger.info("Model evaluation completed, model improved: ", model_improved)
 
