@@ -57,7 +57,7 @@ resources:
           libraries:
             - whl: ./dist/*.whl
             - pypi:
-              package: "loguru"
+                package: "loguru"
         - task_key: "train_model"
           job_cluster_key: "churn-predictor-cluster"
           depends_on:
@@ -78,7 +78,7 @@ resources:
           libraries:
             - whl: ./dist/*.whl
             - pypi:
-              package: "loguru"
+                package: "loguru"
         - task_key: model_updated
           condition_task:
             op: "EQUAL_TO"
@@ -101,7 +101,7 @@ resources:
           libraries:
             - whl: ./dist/*.whl
             - pypi:
-              package: "loguru"
+                package: "loguru"
 
 targets:
 
