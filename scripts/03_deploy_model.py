@@ -1,20 +1,20 @@
-#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
-#%pip install loguru
+# %pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
+# %pip install loguru
 
 import argparse
 
-import os
-
 from loguru import logger
+from pyspark.dbutils import DBUtils
+from pyspark.sql import SparkSession
 
 from churn_predictor.config import ProjectConfig
 from churn_predictor.serving.model_serving import ModelServing
 
 # Load project config
 # Determine the environment and set the config path accordingly
-#if "DATABRICKS_RUNTIME_VERSION" in os.environ:
+# if "DATABRICKS_RUNTIME_VERSION" in os.environ:
 #    config_path = "../project_config.yml"
-#else:
+# else:
 #    config_path = os.path.abspath("project_config.yml")
 
 parser = argparse.ArgumentParser()

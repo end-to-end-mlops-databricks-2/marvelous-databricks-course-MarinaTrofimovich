@@ -1,4 +1,3 @@
-import datetime
 import time
 
 import numpy as np
@@ -78,7 +77,6 @@ class DataProcessor:
             f"{self.config.catalog_name}.{self.config.schema_name}.test_set"
         )
 
-    
     def enable_change_data_feed(self):
         self.spark.sql(
             f"ALTER TABLE {self.config.catalog_name}.{self.config.schema_name}.train_set "
@@ -122,14 +120,7 @@ def generate_synthetic_data(df, num_rows=10):
             synthetic_data[column] = np.random.choice(df[column], num_rows)
 
     # Convert relevant numeric columns to integers
-    int_columns = {
-        "CreditScore",
-        "Age",
-        "Tenure",
-        "NumOfProducts",
-        "HasCrCard",
-        "IsActiveMember"
-    }
+    int_columns = {"CreditScore", "Age", "Tenure", "NumOfProducts", "HasCrCard", "IsActiveMember"}
     for col in int_columns.intersection(df.columns):
         synthetic_data[col] = synthetic_data[col].astype(np.int32)
 

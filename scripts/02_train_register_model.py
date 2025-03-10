@@ -1,27 +1,24 @@
-#%pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
-#%pip install loguru
+# %pip install /Volumes/mlops_dev/mtrofimo/churn_predictor/churn_predictor-0.0.1-py3-none-any.whl
+# %pip install loguru
 
 import argparse
 
-import os
-
 import mlflow
+from loguru import logger
 from pyspark.dbutils import DBUtils
 from pyspark.sql import SparkSession
 
 from churn_predictor.config import ProjectConfig, Tags
 from churn_predictor.models.basic_model import BasicModel
 
-from loguru import logger
-
 # Configure tracking uri
 mlflow.set_tracking_uri("databricks")
 mlflow.set_registry_uri("databricks-uc")
 
 # Determine the environment and set the config path accordingly
-#if "DATABRICKS_RUNTIME_VERSION" in os.environ:
+# if "DATABRICKS_RUNTIME_VERSION" in os.environ:
 #    config_path = "../project_config.yml"
-#else:
+# else:
 #    config_path = os.path.abspath("project_config.yml")
 
 parser = argparse.ArgumentParser()
@@ -75,7 +72,7 @@ config = ProjectConfig.from_yaml(config_path=config_path, env=args.env)
 spark = SparkSession.builder.getOrCreate()
 dbutils = DBUtils(spark)
 tags_dict = {"git_sha": args.git_sha, "branch": args.branch, "job_run_id": args.job_run_id}
-#tags_dict = {"git_sha": 'git_sha', "branch": 'branch', "job_run_id": 'job_run_id'}
+# tags_dict = {"git_sha": 'git_sha', "branch": 'branch', "job_run_id": 'job_run_id'}
 tags = Tags(**tags_dict)
 
 # Initialize model
@@ -95,8 +92,8 @@ basic_model.log_model()
 spark = SparkSession.builder.getOrCreate()
 test_set = spark.table(f"{config.catalog_name}.{config.schema_name}.test_set").limit(100)
 # Drop feature lookup columns and target
-#test_set = test_set.drop("Exited")
-#test_set.display()
+# test_set = test_set.drop("Exited")
+# test_set.display()
 
 model_improved = basic_model.model_improved(test_set=test_set)
 logger.info("Model evaluation completed, model improved: ", model_improved)

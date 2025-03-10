@@ -4,7 +4,7 @@ from lightgbm import LGBMRegressor
 from loguru import logger
 from mlflow import MlflowClient
 from mlflow.models import infer_signature
-from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql import SparkSession
 from sklearn.compose import ColumnTransformer
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.pipeline import Pipeline
@@ -186,20 +186,20 @@ class BasicModel:
 
         # Return predictions as a DataFrame
         return predictions
-    
+
     def model_improved(self, test_set):
         """
         Evaluate the model performance on the test set.
         """
-        #X_test = test_set.drop(self.config.target)
+        # X_test = test_set.drop(self.config.target)
         test_set_wot = test_set.drop(self.config.target)
         X_test_sp = test_set_wot.select("*")
         X_test_sp_wt = test_set.select("*")
         X_test_sp.display()
-        
+
         X_test = X_test_sp.toPandas()
         X_test_wt = X_test_sp_wt.toPandas()
-        
+
         predictions_latest = self.load_latest_model_and_predict(X_test)
         predictions_latest_df = pd.DataFrame(predictions_latest, columns=["prediction"])
         predictions_latest_df = predictions_latest_df.rename(columns={"prediction": "prediction_latest"})
@@ -207,7 +207,6 @@ class BasicModel:
         logger.info("predictions_latest")
         logger.info(predictions_latest_df)
         predictions_latest_df.display()
-
 
         current_model_uri = f"runs:/{self.run_id}/lightgbm-pipeline-model"
         current_model = mlflow.sklearn.load_model(current_model_uri)
@@ -220,26 +219,26 @@ class BasicModel:
         logger.info(predictions_current)
         predictions_current_df.display()
 
-        #test_set = test_set.select("CustomerId", "Exited")
+        # test_set = test_set.select("CustomerId", "Exited")
         X_test_wt = X_test_wt.loc[:, ["CustomerId", "Exited"]]
-    
+
         logger.info("Predictions are ready.")
 
         # Join the DataFrames on the 'id' column
-        #df = test_set.join(predictions_current, on="CustomerId").join(predictions_latest, on="CustomerId")
+        # df = test_set.join(predictions_current, on="CustomerId").join(predictions_latest, on="CustomerId")
         df = X_test_wt.merge(predictions_current_df, on="CustomerId").merge(predictions_latest_df, on="CustomerId")
 
         # Calculate the absolute error for each model
-        #df = df.withColumn("error_current", F.abs(df["Exited"] - df["prediction_current"]))
-        #df = df.withColumn("error_latest", F.abs(df["Exited"] - df["prediction_latest"]))
+        # df = df.withColumn("error_current", F.abs(df["Exited"] - df["prediction_current"]))
+        # df = df.withColumn("error_latest", F.abs(df["Exited"] - df["prediction_latest"]))
         df = df.assign(
-                        error_current=(df["Exited"] - df["prediction_current"]).abs(),
-                        error_latest=(df["Exited"] - df["prediction_latest"]).abs()
-                      )
+            error_current=(df["Exited"] - df["prediction_current"]).abs(),
+            error_latest=(df["Exited"] - df["prediction_latest"]).abs(),
+        )
 
         # Calculate the Mean Absolute Error (MAE) for each model
-        #mae_current = df.agg(F.mean("error_current")).collect()[0][0]
-        #mae_latest = df.agg(F.mean("error_latest")).collect()[0][0]
+        # mae_current = df.agg(F.mean("error_current")).collect()[0][0]
+        # mae_latest = df.agg(F.mean("error_latest")).collect()[0][0]
         mae_current = df["error_current"].mean()
         mae_latest = df["error_latest"].mean()
 
