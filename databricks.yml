@@ -55,9 +55,9 @@ resources:
               - "--env"
               - ${bundle.target}
             libraries:
-            - whl: ./dist/*.whl
-            - pypi:
-                package: loguru
+              - whl: ./dist/*.whl
+              - pypi:
+                package: "loguru"
         - task_key: "train_model"
           job_cluster_key: "churn-predictor-cluster"
           depends_on:
@@ -76,9 +76,9 @@ resources:
               - "--branch"
               - ${var.branch}
             libraries:
-            - whl: ./dist/*.whl
-            - pypi:
-                package: loguru
+              - whl: ./dist/*.whl
+              - pypi:
+                package: "loguru"
         - task_key: model_updated
           condition_task:
             op: "EQUAL_TO"
@@ -99,9 +99,9 @@ resources:
               - "--env"
               - ${bundle.target}
             libraries:
-            - whl: ./dist/*.whl
-            - pypi:
-                package: loguru
+              - whl: ./dist/*.whl
+              - pypi:
+                package: "loguru"
 
 targets:
 
