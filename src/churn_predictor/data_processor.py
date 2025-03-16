@@ -88,6 +88,7 @@ class DataProcessor:
             "SET TBLPROPERTIES (delta.enableChangeDataFeed = true);"
         )
 
+
 def generate_synthetic_data(df, num_rows=10):
     """Generates synthetic data based on the distribution of the input DataFrame."""
     synthetic_data = pd.DataFrame(columns=df.columns)
@@ -174,7 +175,6 @@ def generate_synthetic_data_with_drift(df, drift, num_rows):
     int_columns = {"CreditScore", "Age", "Tenure", "NumOfProducts", "HasCrCard", "IsActiveMember"}
     for col in int_columns.intersection(df.columns):
         synthetic_data[col] = synthetic_data[col].astype(np.int32)
-
 
     if "Geography" in df.columns:
         synthetic_data["Geography"] = synthetic_data["Geography"].astype(df["Geography"].dtype)
