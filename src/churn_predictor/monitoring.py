@@ -35,21 +35,29 @@ def create_or_refresh_monitoring(config, spark, workspace):
         ]), True)
     ])
 
+    
+    # Check the content of the request column
+    inf_table.select("request").show(truncate=False)
+
     inf_table_parsed = inf_table.withColumn("parsed_request", 
                                             F.from_json(F.col("request"),
                                                         request_schema))
-    inf_table_parsed.show()
+    
+    # Check the content of the parsed_request column
+    inf_table_parsed.select("parsed_request").show(truncate=False)
+
     inf_table_parsed.display()
 
     inf_table_parsed = inf_table_parsed.withColumn("parsed_response",
                                                 F.from_json(F.col("response"),
                                                             response_schema))
-    inf_table_parsed.show()
+    # Check the content of the parsed_response column
+    inf_table_parsed.select("parsed_response").show(truncate=False)
     inf_table_parsed.display()
 
     df_exploded = inf_table_parsed.withColumn("record",
                                             F.explode(F.col("dataframe_records")))
-    df_exploded.show()
+
     df_exploded.display()
 
 
