@@ -13,6 +13,7 @@ def create_or_refresh_monitoring(config, spark, workspace):
 
     inf_table = spark.sql(f"SELECT * FROM {config.catalog_name}.{config.schema_name}.`churn_predictor-model-serving_payload_payload`")
 
+    inf_table.show()
     inf_table.display()
 
     request_schema = StructType([
@@ -37,18 +38,18 @@ def create_or_refresh_monitoring(config, spark, workspace):
     inf_table_parsed = inf_table.withColumn("parsed_request", 
                                             F.from_json(F.col("request"),
                                                         request_schema))
-    
+    inf_table_parsed.show()
     inf_table_parsed.display()
 
     inf_table_parsed = inf_table_parsed.withColumn("parsed_response",
                                                 F.from_json(F.col("response"),
                                                             response_schema))
-    
+    inf_table_parsed.show()
     inf_table_parsed.display()
 
     df_exploded = inf_table_parsed.withColumn("record",
                                             F.explode(F.col("dataframe_records")))
-    
+    df_exploded.show()
     df_exploded.display()
 
 
