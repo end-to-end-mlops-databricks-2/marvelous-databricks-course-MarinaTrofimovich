@@ -13,7 +13,7 @@ def create_or_refresh_monitoring(config, spark, workspace):
 
     inf_table = spark.sql(f"SELECT * FROM {config.catalog_name}.{config.schema_name}.`churn_predictor-model-serving_payload_payload`")
 
-    inf_table_parsed.display()
+    inf_table.display()
 
     request_schema = StructType([
         StructField("dataframe_records", ArrayType(StructType([
