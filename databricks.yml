@@ -5,6 +5,9 @@
 bundle:
   name: course-code-hub
 
+include:
+  - bundle_monitoring.yml
+
 artifacts:
   default:
     type: whl
