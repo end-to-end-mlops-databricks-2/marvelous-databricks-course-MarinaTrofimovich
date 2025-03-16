@@ -19,7 +19,8 @@ def create_or_refresh_monitoring(config, spark, workspace):
             StructField("CreditScore", IntegerType(), True),
             StructField("Age", IntegerType(), True),
             StructField("Balance", DoubleType(), True),
-            StructField("IsActiveMember", IntegerType(), True)
+            StructField("IsActiveMember", IntegerType(), True),
+            StructField("CustomerId", StringType(), True)
         ])), True)  
     ])
 
@@ -34,13 +35,19 @@ def create_or_refresh_monitoring(config, spark, workspace):
     inf_table_parsed = inf_table.withColumn("parsed_request", 
                                             F.from_json(F.col("request"),
                                                         request_schema))
+    
+    inf_table_parsed.display()
 
     inf_table_parsed = inf_table_parsed.withColumn("parsed_response",
                                                 F.from_json(F.col("response"),
                                                             response_schema))
+    
+    inf_table_parsed.display()
 
     df_exploded = inf_table_parsed.withColumn("record",
                                             F.explode(F.col("parsed_request.dataframe_records")))
+    
+    df_exploded.display()
 
 
     df_final = df_exploded.select(
