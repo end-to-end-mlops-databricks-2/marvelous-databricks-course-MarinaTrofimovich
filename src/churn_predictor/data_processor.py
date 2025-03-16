@@ -88,8 +88,7 @@ class DataProcessor:
             "SET TBLPROPERTIES (delta.enableChangeDataFeed = true);"
         )
 
-
-def generate_synthetic_data_new(df, drift, num_rows):
+def generate_synthetic_data(df, num_rows=10):
     """Generates synthetic data based on the distribution of the input DataFrame."""
     synthetic_data = pd.DataFrame(columns=df.columns)
 
@@ -141,7 +140,65 @@ def generate_synthetic_data_new(df, drift, num_rows):
     if drift:
         # Skew the top features to introduce drift
         skew_features = ["Balance", "Age"]  # Select top 2 features
-        for feature in skew_features:
+        for feature in top_features:
+            if feature in synthetic_data.columns:
+                synthetic_data[feature] = synthetic_data[feature] * 3
+
+    return synthetic_data
+
+
+def generate_synthetic_data_with_drift(df, drift, num_rows):
+    """Generates synthetic data based on the distribution of the input DataFrame."""
+    synthetic_data = pd.DataFrame(columns=df.columns)
+
+    for column in df.columns:
+        if column == "CustomerId" or column == "RowNumber":
+            continue
+
+        if column == "Exited":
+            synthetic_data[column] = np.random.choice([0, 1], num_rows)
+
+        elif pd.api.types.is_numeric_dtype(df[column]):
+            synthetic_data[column] = np.abs(np.random.normal(df[column].mean(), df[column].std(), num_rows))
+
+        elif pd.api.types.is_categorical_dtype(df[column]) or pd.api.types.is_object_dtype(df[column]):
+            synthetic_data[column] = np.random.choice(
+                df[column].unique(), num_rows, p=df[column].value_counts(normalize=True)
+            )
+
+        elif pd.api.types.is_datetime64_any_dtype(df[column]):
+            min_date, max_date = df[column].min(), df[column].max()
+            synthetic_data[column] = pd.to_datetime(
+                np.random.randint(min_date.value, max_date.value, num_rows)
+                if min_date < max_date
+                else [min_date] * num_rows
+            )
+
+        else:
+            synthetic_data[column] = np.random.choice(df[column], num_rows)
+
+    # Convert relevant numeric columns to integers
+    int_columns = {"CreditScore", "Age", "Tenure", "NumOfProducts", "HasCrCard", "IsActiveMember"}
+    for col in int_columns.intersection(df.columns):
+        synthetic_data[col] = synthetic_data[col].astype(np.int32)
+
+
+    if "Geography" in df.columns:
+        synthetic_data["Geography"] = synthetic_data["Geography"].astype(df["Geography"].dtype)
+
+    # Find the maximum RowNumber in the input DataFrame
+    max_row_number = df["RowNumber"].max() if "RowNumber" in df.columns else 0
+
+    # Create the RowNumber column starting from the next integer after the max RowNumber in df
+    synthetic_data["RowNumber"] = range(max_row_number + 1, max_row_number + 1 + num_rows)
+
+    timestamp_base = int(time.time() * 1000)
+    synthetic_data["CustomerId"] = [str(timestamp_base + i) for i in range(num_rows)]
+
+    if drift:
+        # Skew the top features to introduce drift
+        skew_features = ["Balance", "Age"]  # Select top 2 features
+        for feature in top_features:
             if feature in synthetic_data.columns:
                 synthetic_data[feature] = synthetic_data[feature] * 3
 
