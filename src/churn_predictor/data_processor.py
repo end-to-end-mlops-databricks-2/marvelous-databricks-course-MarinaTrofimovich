@@ -89,7 +89,7 @@ class DataProcessor:
         )
 
 
-def generate_synthetic_data(df, num_rows=10):
+def generate_synthetic_data(df, drift: False, num_rows=10):
     """Generates synthetic data based on the distribution of the input DataFrame."""
     synthetic_data = pd.DataFrame(columns=df.columns)
 
@@ -137,5 +137,12 @@ def generate_synthetic_data(df, num_rows=10):
 
     timestamp_base = int(time.time() * 1000)
     synthetic_data["CustomerId"] = [str(timestamp_base + i) for i in range(num_rows)]
+
+    if drift:
+        # Skew the top features to introduce drift
+        skew_features = ["Balance", "Age"]  # Select top 2 features
+        for feature in top_features:
+            if feature in synthetic_data.columns:
+                synthetic_data[feature] = synthetic_data[feature] * 3
 
     return synthetic_data
