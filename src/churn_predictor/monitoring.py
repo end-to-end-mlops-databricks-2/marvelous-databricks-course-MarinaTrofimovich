@@ -128,7 +128,7 @@ def create_monitoring_table(config, spark, workspace):
             timestamp_col="timestamp",
             granularities=["30 minutes"], 
             model_id_col="model_name",
-            label_col="sale_price",
+            label_col="Exited",
         ),
     )
 
