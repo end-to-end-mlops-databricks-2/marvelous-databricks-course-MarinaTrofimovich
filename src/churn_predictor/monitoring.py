@@ -19,6 +19,8 @@ def create_or_refresh_monitoring(config, spark, workspace):
     request_schema = StructType([
         StructField("dataframe_records", ArrayType(StructType([
             StructField("Geography", StringType(), True),
+            StructField("Gender", StringType(), True),
+            StructField("NumOfProducts", IntegerType(), True),
             StructField("CreditScore", IntegerType(), True),
             StructField("Age", IntegerType(), True),
             StructField("Balance", DoubleType(), True),
@@ -56,7 +58,7 @@ def create_or_refresh_monitoring(config, spark, workspace):
     inf_table_parsed.display()
 
     df_exploded = inf_table_parsed.withColumn("record",
-                                            F.explode(F.col("dataframe_records")))
+                                            F.explode(F.col("parsed_request.dataframe_records")))
 
     df_exploded.display()
 
