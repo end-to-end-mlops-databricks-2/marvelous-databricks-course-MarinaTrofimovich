@@ -13,9 +13,6 @@ def create_or_refresh_monitoring(config, spark, workspace):
 
     inf_table = spark.sql(f"SELECT * FROM {config.catalog_name}.{config.schema_name}.`churn_predictor-model-serving_payload_payload`")
 
-    inf_table.show()
-    inf_table.display()
-
     request_schema = StructType([
         StructField("dataframe_records", ArrayType(StructType([
             StructField("Geography", StringType(), True),
@@ -73,12 +70,17 @@ def create_or_refresh_monitoring(config, spark, workspace):
         F.col("record.CreditScore").alias("CreditScore"),
         F.col("record.Age").alias("Age"),
         F.col("record.Balance").alias("Balance"),
-        F.col("record.IsActiveMember").alias("IsActiveMember")
+        F.col("record.IsActiveMember").alias("IsActiveMember"),
+        F.col("parsed_response.predictions")[0].alias("prediction"),
+        F.lit("churn-predictor-model-fe").alias("model_name")
     )
 
 
     test_set = spark.table(f"{config.catalog_name}.{config.schema_name}.test_set")
     inference_set_skewed = spark.table(f"{config.catalog_name}.{config.schema_name}.inference_data_skewed")
+
+    test_set.display()
+    inference_set_skewed.display()
 
 
     df_final_with_status = df_final \
