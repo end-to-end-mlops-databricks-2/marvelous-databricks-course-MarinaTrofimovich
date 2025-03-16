@@ -11,7 +11,7 @@ from databricks.sdk.errors import NotFound
 
 def create_or_refresh_monitoring(config, spark, workspace):
 
-    inf_table = spark.sql(f"SELECT * FROM {config.catalog_name}.{config.schema_name}.`mlops_dev.mtrofimo.churn_predictor-model-serving_payload_payload`")
+    inf_table = spark.sql(f"SELECT * FROM {config.catalog_name}.{config.schema_name}.`churn_predictor-model-serving_payload_payload`")
 
     request_schema = StructType([
         StructField("dataframe_records", ArrayType(StructType([
