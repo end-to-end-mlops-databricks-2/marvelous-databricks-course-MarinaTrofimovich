@@ -1,76 +1,35 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": 0,
-   "metadata": {
-    "application/vnd.databricks.v1+cell": {
-     "cellMetadata": {},
-     "inputWidgets": {},
-     "nuid": "9ad6bfa6-b78e-41ea-8eae-0702643de828",
-     "showTitle": false,
-     "tableResultSettingsMap": {},
-     "title": ""
-    }
-   },
-   "outputs": [],
-   "source": [
-    "resources:\n",
-    "  jobs:\n",
-    "    churn-predictor-monitor-update:\n",
-    "      name: churn-predictor-monitor-update-workflow\n",
-    "      schedule:\n",
-    "        quartz_cron_expression: \"0 0 6 ? * MON\"\n",
-    "        timezone_id: \"Europe/Amsterdam\"\n",
-    "        pause_status: ${var.schedule_pause_status}\n",
-    "      tags:\n",
-    "        project_name: \"churn-predictor\"\n",
-    "      job_clusters:\n",
-    "        - job_cluster_key: \"churn-predictor-cluster\"\n",
-    "          new_cluster:\n",
-    "            spark_version: \"15.4.x-scala2.12\"\n",
-    "            data_security_mode: \"SINGLE_USER\"\n",
-    "            node_type_id: \"r3.xlarge\"\n",
-    "            driver_node_type_id: \"r3.xlarge\"\n",
-    "            autoscale:\n",
-    "              min_workers: 1\n",
-    "              max_workers: 1\n",
-    "        \n",
-    "      tasks:\n",
-    "        - task_key: \"refresh_monitor_table\"\n",
-    "          # job_cluster_key: \"churn-predictor-cluster\"\n",
-    "          existing_cluster_id: 0202-100155-oxhyq9rw\n",
-    "          spark_python_task:\n",
-    "            python_file: \"scripts/04_refresh_monitoring.py\"\n",
-    "            parameters:\n",
-    "              - \"--root_path\"\n",
-    "              - ${workspace.root_path}\n",
-    "              - \"--env\"\n",
-    "              - ${bundle.target}\n",
-    "          libraries:\n",
-    "           - whl: ./dist/*.whl"
-   ]
-  }
- ],
- "metadata": {
-  "application/vnd.databricks.v1+notebook": {
-   "computePreferences": null,
-   "dashboards": [],
-   "environmentMetadata": {
-    "base_environment": "",
-    "environment_version": "2"
-   },
-   "language": "python",
-   "notebookMetadata": {
-    "pythonIndentUnit": 4
-   },
-   "notebookName": "bundle_monitoring.yml",
-   "widgets": {}
-  },
-  "language_info": {
-   "name": "python"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 0
-}
+
+resources:
+  jobs:
+    churn-predictor-monitor-update:
+      name: churn-predictor-monitor-update-workflow
+      schedule:
+        quartz_cron_expression: "0 0 6 ? * MON"
+        timezone_id: "Europe/Amsterdam"
+        pause_status: ${var.schedule_pause_status}
+      tags:
+        project_name: "churn-predictor"
+      job_clusters:
+        - job_cluster_key: "churn-predictor-cluster"
+          new_cluster:
+            spark_version: "15.4.x-scala2.12"
+            data_security_mode: "SINGLE_USER"
+            node_type_id: "r3.xlarge"
+            driver_node_type_id: "r3.xlarge"
+            autoscale:
+              min_workers: 1
+              max_workers: 1
+
+      tasks:
+        - task_key: "refresh_monitor_table"
+          # job_cluster_key: "house-price-cluster"
+          existing_cluster_id: 0202-100155-oxhyq9rw
+          spark_python_task:
+            python_file: "scripts/04_refresh_monitoring.py"
+            parameters:
+              - "--root_path"
+              - ${workspace.root_path}
+              - "--env"
+              - ${bundle.target}
+          libraries:
+           - whl: ./dist/*.whl
