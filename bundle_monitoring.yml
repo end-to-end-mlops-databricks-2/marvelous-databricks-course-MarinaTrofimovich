@@ -41,7 +41,7 @@
     "          # job_cluster_key: \"churn-predictor-cluster\"\n",
     "          existing_cluster_id: 0202-100155-oxhyq9rw\n",
     "          spark_python_task:\n",
-    "            python_file: \"scripts/04.refresh_monitor.py\"\n",
+    "            python_file: \"scripts/04_refresh_monitor.py\"\n",
     "            parameters:\n",
     "              - \"--root_path\"\n",
     "              - ${workspace.root_path}\n",
