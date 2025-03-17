@@ -126,7 +126,7 @@ def create_monitoring_table(config, spark, workspace):
         assets_dir=f"/Workspace/Shared/lakehouse_monitoring/{monitoring_table}",
         output_schema_name=f"{config.catalog_name}.{config.schema_name}",
         inference_log=MonitorInferenceLog(
-            problem_type=MonitorInferenceLogProblemType.PROBLEM_TYPE_REGRESSION,
+            problem_type=MonitorInferenceLogProblemType.PROBLEM_TYPE_CLASSIFICATION,
             prediction_col="prediction",
             timestamp_col="timestamp",
             granularities=["30 minutes"],
