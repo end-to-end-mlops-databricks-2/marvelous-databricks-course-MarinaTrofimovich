@@ -1,9 +1,10 @@
 import argparse
+
 from databricks.connect import DatabricksSession
 from databricks.sdk import WorkspaceClient
 
-from churn_predictorce.config import ProjectConfig
-from churn_predictorce.monitoring import create_or_refresh_monitoring
+from churn_predictor.config import ProjectConfig
+from churn_predictor.monitoring import create_or_refresh_monitoring
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
