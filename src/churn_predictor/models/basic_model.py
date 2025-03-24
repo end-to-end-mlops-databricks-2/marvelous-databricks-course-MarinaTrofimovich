@@ -6,7 +6,7 @@ from mlflow import MlflowClient
 from mlflow.models import infer_signature
 from pyspark.sql import SparkSession
 from sklearn.compose import ColumnTransformer
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 
@@ -96,12 +96,12 @@ class BasicModel:
             self.run_id = run.info.run_id
 
             y_pred = self.pipeline.predict(self.X_test)
-            
+
             # Evaluate classification metrics
             accuracy = accuracy_score(self.y_test, y_pred)
-            precision = precision_score(self.y_test, y_pred, average='weighted')
-            recall = recall_score(self.y_test, y_pred, average='weighted')
-            f1 = f1_score(self.y_test, y_pred, average='weighted')
+            precision = precision_score(self.y_test, y_pred, average="weighted")
+            recall = recall_score(self.y_test, y_pred, average="weighted")
+            f1 = f1_score(self.y_test, y_pred, average="weighted")
 
             logger.info(f"📊 Accuracy: {accuracy}")
             logger.info(f"📊 Precision: {precision}")
