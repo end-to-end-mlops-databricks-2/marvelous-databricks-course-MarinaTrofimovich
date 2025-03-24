@@ -191,7 +191,7 @@ class BasicModel:
         """
         Evaluate the model performance on the test set.
         """
-        # X_test = test_set.drop(self.config.target)
+
         test_set_wot = test_set.drop(self.config.target)
         X_test_sp = test_set_wot.select("*")
         X_test_sp_wt = test_set.select("*")
@@ -219,34 +219,22 @@ class BasicModel:
         logger.info(predictions_current)
         predictions_current_df.display()
 
-        # test_set = test_set.select("CustomerId", "Exited")
         X_test_wt = X_test_wt.loc[:, ["CustomerId", "Exited"]]
 
         logger.info("Predictions are ready.")
 
-        # Join the DataFrames on the 'id' column
-        # df = test_set.join(predictions_current, on="CustomerId").join(predictions_latest, on="CustomerId")
         df = X_test_wt.merge(predictions_current_df, on="CustomerId").merge(predictions_latest_df, on="CustomerId")
 
-        # Calculate the absolute error for each model
-        # df = df.withColumn("error_current", F.abs(df["Exited"] - df["prediction_current"]))
-        # df = df.withColumn("error_latest", F.abs(df["Exited"] - df["prediction_latest"]))
-        df = df.assign(
-            error_current=(df["Exited"] - df["prediction_current"]).abs(),
-            error_latest=(df["Exited"] - df["prediction_latest"]).abs(),
-        )
+        # Calculate the recall for each model
+        recall_current = recall_score(df["Exited"], df["prediction_current"])
+        recall_latest = recall_score(df["Exited"], df["prediction_latest"])
 
-        # Calculate the Mean Absolute Error (MAE) for each model
-        # mae_current = df.agg(F.mean("error_current")).collect()[0][0]
-        # mae_latest = df.agg(F.mean("error_latest")).collect()[0][0]
-        mae_current = df["error_current"].mean()
-        mae_latest = df["error_latest"].mean()
+        # Log the recall scores
+        logger.info(f"Recall for Current Model: {recall_current}")
+        logger.info(f"Recall for Latest Model: {recall_latest}")
 
-        # Compare models based on MAE
-        logger.info(f"MAE for Current Model: {mae_current}")
-        logger.info(f"MAE for Latest Model: {mae_latest}")
-
-        if mae_current < mae_latest:
+        # Compare models based on recall
+        if recall_current > recall_latest:
             logger.info("Current Model performs better. Registering new model.")
             return True
         else:
