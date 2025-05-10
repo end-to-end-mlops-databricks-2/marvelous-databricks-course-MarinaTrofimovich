@@ -1,0 +1,36 @@
+prd:
+  catalog_name: mlops_prod
+  schema_name: mtrofimo
+acc:
+  catalog_name: mlops_acc
+  schema_name: mtrofimo
+dev:
+  catalog_name: mlops_dev
+  schema_name: mtrofimo
+
+
+experiment_name: /Shared/churn-predictor-basic
+
+parameters:
+  learning_rate: 0.01
+  n_estimators: 1000
+  max_depth: 6
+
+num_features:
+  - CreditScore
+  - Age
+  - Balance
+  - IsActiveMember
+
+cat_features:
+  - Geography
+  - Gender
+  - NumOfProducts
+
+target: Exited
+
+ab_test:
+  test_group: A
+  control_group: B
+
+pipeline_id: pipeline_12345
